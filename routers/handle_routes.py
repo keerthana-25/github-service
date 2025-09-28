@@ -4,8 +4,13 @@ from services.github_api_service import create_github_issue, comment_github_issu
 
 router = APIRouter()
 
+
 @router.post("/issues", response_model=IssueResponseModel, status_code=201)
 def create_issue(body: CreateBodyModel, response: Response):
+    """
+    Create a new GitHub issue with the given title, body, and labels.
+    Sets the Location header to the new issue's id.
+    """
     data = create_github_issue(body.title, body.body, body.labels)
     response.headers["Location"] = f"/issues/{data['number']}"
     return {
@@ -22,9 +27,14 @@ def create_issue(body: CreateBodyModel, response: Response):
 
 @router.get("/issues", response_model=list[IssueResponseModel])
 def get_issue(param: GetQueryParamsModel = Depends(), response: Response = None):
+    """
+    Retrieve a list of GitHub issues, optionally filtered by state, labels, and pagination.
+    Forwards the GitHub Link header for pagination if present.
+    """
     data, link_header = get_github_issues(param.state, param.labels, param.page, param.per_page)
     issues = []
     for item in data:
+        # Extract fields and label names
         issue = {
             "number": item["number"],
             "html_url": item["html_url"],
@@ -37,12 +47,16 @@ def get_issue(param: GetQueryParamsModel = Depends(), response: Response = None)
         }
         issues.append(issue)
     if link_header:
+        # Forward pagination header to client
         response.headers["Link"] = link_header
     return issues
 
 
 @router.get("/issues/{issue_number}", response_model=IssueResponseModel)
 def get_single_issue(issue_number: int):
+    """
+    Retrieve a GitHub issue by its number.
+    """
     data = get_github_issue(issue_number)
     return {
         "number": data["number"],
@@ -58,6 +72,9 @@ def get_single_issue(issue_number: int):
 
 @router.patch("/issues/{issue_number}", response_model=IssueResponseModel)
 def update_issue(body: UpdateBodyModel, issue_number: int):
+    """
+    Update an existing GitHub issue's title, body, or state.
+    """
     data = update_github_issue(issue_number, body.title, body.body, body.state)
     return {
         "number": data["number"],
@@ -73,6 +90,9 @@ def update_issue(body: UpdateBodyModel, issue_number: int):
 
 @router.post("/issues/{issue_number}/comments", response_model=CommentResponseModel, status_code=201)
 def comment_issue(body: CommentBodyModel, issue_number: int):
+    """
+    Add a comment to a GitHub issue.
+    """
     data = comment_github_issue(issue_number, body.body)
     return {
         "id": data["id"],
