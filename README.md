@@ -1,23 +1,14 @@
-# github-service
+# GitHub Issue Service
 
-## Description
-`github-service` is a FastAPI-based microservice for interacting with the GitHub API. It allows you to create, retrieve, update, and comment on issues in a GitHub repository via a simple REST API.
-
-## Features
-- Create new GitHub issues
-- List and filter issues
-- Get details of a single issue
-- Update issue title, body, or state
-- Comment on issues
+This project is a FastAPI-based microservice for interacting with the GitHub Issues API. It allows you to perform various GitHub issues operations such as, create, retrieve, update, and comment on issues via a simple REST API.
 
 ## Requirements
 - Python 3.11+
-- Docker (optional, for containerized deployment)
 
 ## Setup (Local)
 1. Clone the repository:
 	```sh
-	git clone <repo-url>
+	git clone https://github.com/keerthana-25/github-service.git
 	cd github-service
 	```
 2. Install dependencies:
@@ -26,9 +17,9 @@
 	```
 3. Create a `.env` file with your GitHub token and repo info:
 	```env
-	GITHUB_TOKEN=your_github_token
-	GITHUB_OWNER=your_github_username_or_org
-	GITHUB_REPO=your_repo_name
+	GITHUB_TOKEN=<your_github_token>
+	GITHUB_OWNER=keerthana-25
+	GITHUB_REPO=github-service
 	```
 4. Run the app:
 	```sh
@@ -42,7 +33,7 @@
 	```
 2. Run the container (with .env):
 	```sh
-	docker run --env-file .env -p 8000:8000 github-service
+	docker run --env-file <path-to-env-file> -p 8000:8000 github-service
 	```
 
 ## API Endpoints
@@ -52,14 +43,11 @@
 - `PATCH  /issues/{issue_number}` — Update an issue
 - `POST   /issues/{issue_number}/comments` — Comment on an issue
 
-## Example: Create an Issue
+## Testing
+To create an issue
+
 ```sh
 curl -X POST "http://localhost:8000/issues" \
   -H "Content-Type: application/json" \
-  -d '{"title": "Bug report", "body": "Details...", "labels": ["bug"]}'
+  -d '{"title": "Bug report", "body": "This is a bug", "labels": ["bug"]}'
 ```
-
-## Environment Variables
-- `GITHUB_TOKEN` — GitHub personal access token
-- `GITHUB_OWNER` — GitHub username or organization
-- `GITHUB_REPO` — Repository name
