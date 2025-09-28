@@ -23,3 +23,23 @@ class UpdateBodyModel(BaseModel):
 
 class CommentBodyModel(BaseModel):
     body: str
+
+
+class IssueResponseModel(BaseModel):
+    number: int
+    html_url: str
+    state: str
+    title: str
+    body: Optional[str] = None
+    labels: Optional[List[str]] = []
+    created_at: str
+    updated_at: str
+
+class CommentResponseModel(BaseModel):
+    id: int
+    html_url: str
+    body: str
+    user: str
+    created_at: str
+    updated_at: str
+    

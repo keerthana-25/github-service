@@ -32,7 +32,7 @@ def get_github_issues(state, labels, page, per_page):
     }
     response = requests.get(api_url, headers=HEADERS, params=params)
     if response.status_code == 200:
-        return response.json()
+        return response.json(), response.headers.get("Link")
     else:
         raise HTTPException(status_code=response.status_code, Messsage=response.text)
 
