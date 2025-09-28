@@ -15,9 +15,9 @@ This project is a FastAPI-based microservice for interacting with the GitHub Iss
 	```sh
 	pip install -r requirements.txt
 	```
-3. Create a `.env` file with your GitHub token and repo info:
+3. Create a `.env` file with GitHub token and repo info:
 	```env
-	GITHUB_TOKEN=<your_github_token>
+	GITHUB_TOKEN=<github_token>
 	GITHUB_OWNER=keerthana-25
 	GITHUB_REPO=github-service
 	```
@@ -43,11 +43,36 @@ This project is a FastAPI-based microservice for interacting with the GitHub Iss
 - `PATCH  /issues/{issue_number}` — Update an issue
 - `POST   /issues/{issue_number}/comments` — Comment on an issue
 
-## Testing
-To create an issue
-
+## API Example
+Create an issue:
 ```sh
 curl -X POST "http://localhost:8000/issues" \
   -H "Content-Type: application/json" \
   -d '{"title": "Bug report", "body": "This is a bug", "labels": ["bug"]}'
+```
+
+Get all open issues:
+```sh
+curl -v -X GET "http://localhost:8000/issues?state=open"
+```
+
+Get issue by number:
+```sh
+curl -v -X GET "http://localhost:8000/issues/1"
+```
+
+Update the title of an issue:
+```sh
+curl -X PATCH "http://localhost:8000/issues/7" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Test Issue 7"
+  }'
+```
+
+Comment on an issue:
+```sh
+curl -X POST "http://localhost:8000/issues/7/comments" \
+  -H "Content-Type: application/json" \
+  -d '{"body": "This is a comment"}'
 ```
