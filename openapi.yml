@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: GitHub Issue Service API
+  version: 1.0.0
+  description: |
+    API for managing GitHub issues and comments via FastAPI.
+    
+servers:
+  - url: http://localhost:8000
+
+paths:
+  /issues:
+    post:
+      summary: Create issue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBodyModel'
+      responses:
+        '201':
+          description: Issue created
+          headers:
+            Location:
+              description: URL of the created issue
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssueResponseModel'
+    get:
+      summary: List of GitHub issues
+      parameters:
+        - in: query
+          name: state
+          schema:
+            type: string
+            enum: [open, closed, all]
+            default: open
+        - in: query
+          name: labels
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+            default: 30
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Get issues
+          headers:
+            Link:
+              description: Pagination links
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IssueResponseModel'
+  /issues/{issue_number}:
+    get:
+      summary: Get issue by number
+      parameters:
+        - in: path
+          name: issue_number
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Issue details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssueResponseModel'
+    patch:
+      summary: Update issue
+      parameters:
+        - in: path
+          name: issue_number
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBodyModel'
+      responses:
+        '200':
+          description: Updated issue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssueResponseModel'
+  /issues/{issue_number}/comments:
+    post:
+      summary: Add comment
+      parameters:
+        - in: path
+          name: issue_number
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentBodyModel'
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponseModel'
+
+components:
+  schemas:
+    CreateBodyModel:
+      type: object
+      properties:
+        title:
+          type: string
+        body:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+      required: [title]
+    GetQueryParamsModel:
+      type: object
+      properties:
+        state:
+          type: string
+          enum: [open, closed, all]
+          default: open
+        labels:
+          type: string
+        page:
+          type: integer
+          default: 1
+          minimum: 1
+        per_page:
+          type: integer
+          default: 30
+          minimum: 1
+          maximum: 100
+    UpdateBodyModel:
+      type: object
+      properties:
+        title:
+          type: string
+        body:
+          type: string
+        state:
+          type: string
+          enum: [open, closed]
+    CommentBodyModel:
+      type: object
+      properties:
+        body:
+          type: string
+      required: [body]
+    IssueResponseModel:
+      type: object
+      properties:
+        number:
+          type: integer
+        html_url:
+          type: string
+        state:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required: [number, html_url, state, title, created_at, updated_at]
+    CommentResponseModel:
+      type: object
+      properties:
+        id:
+          type: integer
+        html_url:
+          type: string
+        body:
+          type: string
+        user:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required: [id, html_url, body, user, created_at, updated_at]
