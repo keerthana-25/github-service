@@ -1,9 +1,8 @@
-"""
-github_api_service.py
-Author: Keerthana (keerthana-25)
-Organization: <Your Organization Name>
-Description: Service functions for interacting with the GitHub Issues API.
-"""
+# Author: Keerthana (keerthana-25)
+# Email: keerthanapm257@gmail.com
+# Assignment: GitHub Issue Service - GitHub API Integration
+# Date: September 29, 2025
+# Description: Service layer for GitHub API interactions and issue management
 import requests
 from config import BASE_URL, HEADERS
 from fastapi import HTTPException
@@ -27,6 +26,7 @@ def create_github_issue(title, body, labels):
     payload = {}
     if title is None:
         raise ValueError("The required field Title is missing.")
+    payload["title"] = title
     if body is not None:
         payload["body"] = body
     if labels is not None:
@@ -38,7 +38,7 @@ def create_github_issue(title, body, labels):
         data = response.json()
         return data
     else:
-        raise HTTPException(status_code=response.status_code, Messsage=response.text)
+        raise HTTPException(status_code=response.status_code, detail=response.text)
 
 def get_github_issues(state, labels, page, per_page):
     """
@@ -64,7 +64,7 @@ def get_github_issues(state, labels, page, per_page):
     if response.status_code == 200:
         return response.json(), response.headers.get("Link")
     else:
-        raise HTTPException(status_code=response.status_code, Messsage=response.text)
+        raise HTTPException(status_code=response.status_code, detail=response.text)
 
 def get_github_issue(issue_number):
     """
@@ -81,7 +81,7 @@ def get_github_issue(issue_number):
     if response.status_code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, Messsage=response.text)
+        raise HTTPException(status_code=response.status_code, detail=response.text)
     
 def update_github_issue(issue_number, title, body, state):
     """
@@ -135,4 +135,4 @@ def comment_github_issue(issue_number, comment_body):
     if response.status_code == 201:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, Messsage=response.text)
+        raise HTTPException(status_code=response.status_code, detail=response.text)

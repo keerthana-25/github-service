@@ -1,0 +1,74 @@
+# Author: Nitish Ratakonda (nitishsjsucs)
+# Email: Nitish.ratakonda@sjsu.edu
+# Assignment: GitHub Issue Service - Multi-container Setup
+# Date: September 29, 2025
+# Description: Complete stack with FastAPI, Nginx, and Redis
+
+services:
+  # GitHub Issue Service
+  github-issue-service:
+    build: .
+    container_name: github-issue-service
+    ports:
+      - "8000:8000"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_OWNER=${GITHUB_OWNER}
+      - GITHUB_REPO=${GITHUB_REPO}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - PORT=8000
+    volumes:
+      - webhook_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/healthz')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - github-service-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: github-issue-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - github-issue-service
+    restart: unless-stopped
+    networks:
+      - github-service-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching
+  redis:
+    image: redis:alpine
+    container_name: github-issue-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - github-service-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+networks:
+  github-service-network:
+    driver: bridge
+
+volumes:
+  webhook_data:
+    driver: local
+  redis_data:
+    driver: local

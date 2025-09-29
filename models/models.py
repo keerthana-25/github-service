@@ -1,3 +1,9 @@
+# Author: Keerthana (keerthana-25)
+# Email: keerthanapm257@gmail.com
+# Assignment: GitHub Issue Service - Data Models
+# Date: September 29, 2025
+# Description: Pydantic models for API request/response validation
+
 from typing_extensions import Literal
 from pydantic import BaseModel, Field
 from typing import List, Optional

@@ -1,3 +1,9 @@
+# Author: Keerthana (keerthana-25)
+# Email: keerthanapm257@gmail.com
+# Assignment: GitHub Issue Service - Issue CRUD Routes
+# Date: September 29, 2025
+# Description: FastAPI routes for GitHub issue CRUD operations
+
 from fastapi import APIRouter, Depends, HTTPException, Response
 from models.models import CreateBodyModel, GetQueryParamsModel, UpdateBodyModel, CommentBodyModel, IssueResponseModel, CommentResponseModel
 from services.github_api_service import create_github_issue, comment_github_issue, get_github_issues, get_github_issue, update_github_issue

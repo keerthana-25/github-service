@@ -1,6 +1,17 @@
+# Author: Keerthana (keerthana-25)
+# Email: keerthanapm257@gmail.com
+# Assignment: GitHub Issue Service - Dependencies
+# Date: September 29, 2025
+# Description: Python package dependencies for the GitHub Issue Service
+
 fastapi[standard]
 redis
 types-redis
 uvicorn
 requests
 routers
+pytest
+pytest-cov
+pytest-asyncio
+httpx
+python-multipart
